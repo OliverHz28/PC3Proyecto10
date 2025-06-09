@@ -18,3 +18,10 @@ def test_leer_json_valido(json_de_prueba):
     contenido = leer_json(json_de_prueba)
     assert contenido["version"] == 1.0
     assert contenido["name"] == "Test App"
+
+def test_incrementar_version(json_de_prueba):
+    nueva_version = incrementar_version(json_de_prueba)
+    assert nueva_version == 2.0
+    with open(json_de_prueba) as f:
+        datos = json.load(f)
+    assert datos["version"] == 2.0
