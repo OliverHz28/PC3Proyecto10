@@ -34,3 +34,11 @@ def test_leer_json_invalido(tmp_path):
     file_path.write_text("esto no es json")
     with pytest.raises(ValueError):
         leer_json(file_path)
+
+# Preparamos un archivo JSON con campo 'version' de tipo incorrecto
+def test_incrementar_version_tipo_incorrecto(tmp_path):
+    file_path = tmp_path / "version_invalida.json"
+    with open(file_path, 'w') as f:
+        json.dump({"version": "uno"}, f)
+    with pytest.raises(TypeError):
+        incrementar_version(file_path)
