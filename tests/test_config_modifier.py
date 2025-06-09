@@ -13,3 +13,8 @@ def json_de_prueba(tmp_path):
     with open(file_path, 'w') as f:
         json.dump(data, f)
     return file_path
+
+def test_leer_json_valido(json_de_prueba):
+    contenido = leer_json(json_de_prueba)
+    assert contenido["version"] == 1.0
+    assert contenido["name"] == "Test App"
