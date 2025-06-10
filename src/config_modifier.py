@@ -4,7 +4,8 @@ import os
 
 def leer_json(file_path):
     """
-    Lee el  archivo JSON desde el sistema de archivos y devuelve su  contenido como un diccionario
+    Lee el  archivo JSON desde el sistema de archivos y
+    devuelve su  contenido como un diccionario
     """
 
     if not os.path.exists(file_path):
