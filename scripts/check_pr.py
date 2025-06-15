@@ -20,3 +20,19 @@ def validar_titulo(carpeta_pr: str) -> Tuple[bool, str]:
         return True, "OK"
 
     return False, f"FAIL: '{titulo}' no cumple con el formato requerido"
+
+
+def verificiar_changelog(carpeta_pr: str) -> Tuple[bool, str]:
+
+    archivo_changelog = "../CHANGELOG.md"
+
+    if not os.path.isfile(archivo_changelog):
+        return False, "FAIL: no existe CHANGELOG.md"
+
+    contenido = open(archivo_changelog, encoding="utf-8").read()
+    seccion_pr = f"## PR {os.path.basename(carpeta_pr)}"
+
+    if seccion_pr in contenido:
+        return True, "OK"
+
+    return False, f"FAIL: No se encontro la seccion '{seccion_pr}'"
