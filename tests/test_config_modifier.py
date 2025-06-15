@@ -5,9 +5,10 @@ import json
 import sys
 import os
 
-from config_modifier import leer_json, incrementar_version
 sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..', 'src')))
+
+from config_modifier import leer_json, incrementar_version
 
 @pytest.fixture
 # Preparamos un archivo temporal para pruebas
