@@ -4,10 +4,10 @@ import pytest
 import json
 import sys
 import os
+
 from config_modifier import leer_json, incrementar_version
 sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..', 'src')))
-
 
 @pytest.fixture
 # Preparamos un archivo temporal para pruebas
@@ -36,7 +36,7 @@ def test_incrementar_version(json_de_prueba):
     assert datos["version"] == 2.0
 
 
-#Preparamos un archivo  con contenido invalido (no JSON)
+# Preparamos un archivo  con contenido invalido (no JSON)
 def test_leer_json_invalido(tmp_path):
     file_path = tmp_path / "invalido.json"
     file_path.write_text("esto no es json")
