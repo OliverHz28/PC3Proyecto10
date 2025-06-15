@@ -1,6 +1,6 @@
 import os
 import re
-from typing import Tuple
+from typing import Tuple, List
 
 
 def validar_titulo(carpeta_pr: str) -> Tuple[bool, str]:
@@ -36,3 +36,18 @@ def verificiar_changelog(carpeta_pr: str) -> Tuple[bool, str]:
         return True, "OK"
 
     return False, f"FAIL: No se encontro la seccion '{seccion_pr}'"
+
+
+def validar_commits(carpeta_pr: str) -> Tuple[bool, List[str]]:
+    archivo_commits = os.path.join(carpeta_pr, "commits.txt")
+    if not os.path.isfile(archivo_commits):
+        return False, ["no existe el archivo commits.txt"]
+
+    incorrectos: List[str] = []
+    patron = re.compile(r"^(feat|fix|docs|style|refactor|perf|test|chore)\[#\d+\]: .+")
+
+    for fila, commit in enumerate(open(archivo_commits, encoding="utf-8"), 1):
+        if not patron.match(commit.strip()):
+            incorrectos.append(f"fila {fila}: '{commit.strip()}'")
+
+    return (len(incorrectos) == 0, incorrectos)
