@@ -191,7 +191,7 @@ Para trabajar con el proyecto, realiza los pasos a continuacion.
     ```
 
     ```bash
-    chmod +x lint_all.sh
+    chmod +x scripts/lint_all.sh 
     ```
 
 4. **Ejecucion de `config_modifier.py`**
