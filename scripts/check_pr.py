@@ -81,3 +81,30 @@ def ejecutar_tests() -> Tuple[bool, str]:
             return False, resultado.stdout.strip() + "\n" + resultado.stderr.strip()
     except FileNotFoundError:
         return False, "No se encontro pytest"
+
+
+def generar_pr_repor(ruta_report: str, titulo, changelog, commits, lint, tests):
+    with open(ruta_report, "w", encoding="utf-8") as f:
+        f.write("# Informe de Validacion\n\n")
+        f.write("## Titulo\n")
+        f.write(f"{'OK' if titulo[0] else 'FAIL'}: {titulo[1]}\n\n")
+
+        f.write("## Changelog\n")
+        f.write(f"{'OK' if changelog[0] else 'FAIL'}: {changelog[1]}\n\n")
+
+        f.write("## Commits\n")
+        if commits[0]:
+            f.write("OK: Todos los commits son validos\n\n")
+        else:
+            f.write("FAIL: Commits con errores de formato:\n")
+            for error in commits[1]:
+                f.write(f"- {error}\n")
+            f.write("\n")
+
+        f.write("## Lint\n")
+        f.write(f"{'OK' if lint[0] else 'FAIL'}\n")
+        f.write(f"```\n{lint[1]}\n```\n\n")
+
+        f.write("## Tests\n")
+        f.write(f"{'OK' if tests[0] else 'FAIL'}\n")
+        f.write(f"```\n{tests[1]}\n```\n")
