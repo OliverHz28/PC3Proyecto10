@@ -35,3 +35,15 @@ def incrementar_version(file_path):
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(config, f, indent=4)
     return config["version"]
+
+
+if __name__ == "__main__":
+
+    file_path = "config.json"
+    try:
+        data = leer_json(file_path)
+        print(f"Contenido del archivo '{file_path}': {data}")
+        nueva_version = incrementar_version(file_path)
+        print(f"Versión actualizada correctamente a: {nueva_version}")
+    except Exception as e:
+        print(f"Error: {e}")
