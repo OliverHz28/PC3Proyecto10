@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 from typing import Tuple, List
 
 
@@ -51,3 +52,17 @@ def validar_commits(carpeta_pr: str) -> Tuple[bool, List[str]]:
             incorrectos.append(f"fila {fila}: '{commit.strip()}'")
 
     return (len(incorrectos) == 0, incorrectos)
+
+
+def ejecutar_lint() -> Tuple[bool, str]:
+    try:
+        resultado = subprocess.run(
+            ["bash", "lint_all.sh"],
+            capture_output=True,
+            text=True)
+        if resultado.returncode == 0:
+            return True, resultado.stdout.strip()
+        else:
+            return False, resultado.stderr.strip() or resultado.stdout.strip()
+    except FileNotFoundError:
+        return False, "no existe el script lint_all.sh"
