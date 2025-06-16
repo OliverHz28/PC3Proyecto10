@@ -66,3 +66,18 @@ def ejecutar_lint() -> Tuple[bool, str]:
             return False, resultado.stderr.strip() or resultado.stdout.strip()
     except FileNotFoundError:
         return False, "no existe el script lint_all.sh"
+
+
+def ejecutar_tests() -> Tuple[bool, str]:
+    try:
+        resultado = subprocess.run(
+            ["pytest", "--maxfail=1", "--disable-warnings", "-q"],
+            capture_output=True,
+            text=True
+        )
+        if resultado.returncode == 0:
+            return True, resultado.stdout.strip()
+        else:
+            return False, resultado.stdout.strip() + "\n" + resultado.stderr.strip()
+    except FileNotFoundError:
+        return False, "No se encontro pytest"
