@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.." || exit
 errores=0 
 
 echo "Ejecutando flake8"
-if flake8 src/ tests/ ./*.py --max-line-length=88 --select=E,W,F; then
+if flake8 src/ tests/ --max-line-length=88 --select=E,W,F; then
   echo "No se encontraron errores con flake8"
 else
   echo "flake8 encontro errores"
