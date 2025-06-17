@@ -14,7 +14,7 @@ fi
 
 echo "*********************"
 echo "Ejecutando shellcheck"
-if shellcheck scripts/* hooks/*; then 
+if shellcheck scripts/*.sh hooks/*; then 
   echo "No se encontraron errores con shellcheck"
 else
   echo "shellcheck encontro errores"
