@@ -90,3 +90,21 @@ def test_commits_todos_validos():
         ok, errores = validar_commits(carpeta_pr)
         assert ok is True
         assert errores == []
+
+# Test para verificar que los commits tienen errores de formato
+def test_commits_con_errores():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        carpeta_pr = os.path.join(temp_dir, "128")
+        os.makedirs(carpeta_pr)
+
+        commits = """commit sin formato
+                    feat123: falta corchetes
+                    fix[#789]: commit correcto"""
+        with open(os.path.join(carpeta_pr, "commits.txt"), "w", encoding="utf-8") as f:
+            f.write(commits)
+
+        ok, errores = validar_commits(carpeta_pr)
+        assert ok is False
+        assert len(errores) == 2
+        assert "fila 1" in errores[0]
+        assert "fila 2" in errores[1]
