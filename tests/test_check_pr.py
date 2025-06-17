@@ -91,6 +91,7 @@ def test_commits_todos_validos():
         assert ok is True
         assert errores == []
 
+
 # Test para verificar que los commits tienen errores de formato
 def test_commits_con_errores():
     with tempfile.TemporaryDirectory() as temp_dir:
