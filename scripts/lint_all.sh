@@ -2,7 +2,7 @@
 
 cd "$(dirname "$0")/.." || exit
 
-errores=0 
+errores=0
 
 echo "Ejecutando flake8"
 if flake8 src/ tests/ --max-line-length=88 --select=E,W,F; then
@@ -14,7 +14,7 @@ fi
 
 echo "*********************"
 echo "Ejecutando shellcheck"
-if shellcheck scripts/* hooks/*; then 
+if shellcheck scripts/*.sh hooks/*; then 
   echo "No se encontraron errores con shellcheck"
 else
   echo "shellcheck encontro errores"
