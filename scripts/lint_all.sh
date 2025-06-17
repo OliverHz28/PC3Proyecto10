@@ -2,7 +2,25 @@
 
 cd "$(dirname "$0")/.." || exit
 
-errores=0 
+# Colores
+GREEN="\033[1;32m"
+RED="\033[1;31m"
+YELLOW="\033[1;33m"
+NC="\033[0m" #No Color
+
+errores=0
+start_time=$(date +%s)
+
+check_tool() {
+	if ! command -v "$1" &>/dev/null; then
+		echo -e "${YELLOW} Herramienta $1 no esta instalada. Se omitira.${NC}"
+		return 1
+	fi
+	return 0
+}
+
+echo "Iniciando verificacion de código con linters..."
+echo "==============================================="
 
 echo "Ejecutando flake8"
 if flake8 src/ tests/ --max-line-length=88 --select=E,W,F; then
