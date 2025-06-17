@@ -34,13 +34,15 @@ if check_tool flake8; then
  	fi
 fi
 
-echo "*********************"
-echo "Ejecutando shellcheck"
-if shellcheck scripts/*.sh hooks/*; then 
-  echo "No se encontraron errores con shellcheck"
-else
-  echo "shellcheck encontro errores"
-  errores=1
+if check_tool shellcheck; then
+	echo "*********************"
+	echo "Ejecutando shellcheck"
+	if shellcheck scripts/*.sh hooks/*; then 
+		echo -e "${GREEN} No se encontraron errores con shellcheck${NC}"
+	else
+		echo -e "${RED} shellcheck encontró errores${NC}"
+	errores=1
+	fi
 fi
 
 echo "*********************"
