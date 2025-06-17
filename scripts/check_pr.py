@@ -27,7 +27,7 @@ def validar_titulo(carpeta_pr: str) -> Tuple[bool, str]:
 
 
 # Verifica que el archivo CHANGELOG.md contenga una seccion para el PR actual
-def verificiar_changelog(carpeta_pr: str) -> Tuple[bool, str]:
+def verificar_changelog(carpeta_pr: str) -> Tuple[bool, str]:
 
     archivo_changelog = "../CHANGELOG.md"
 
@@ -95,10 +95,10 @@ def generar_pr_repor(ruta_report: str, titulo, changelog, commits, lint, tests):
     with open(ruta_report, "w", encoding="utf-8") as f:
         f.write("# Informe de Validacion\n\n")
         f.write("## Titulo\n")
-        f.write(f"{'OK' if titulo[0] else 'FAIL'}: {titulo[1]}\n\n")
+        f.write(f"{titulo[1]}\n\n")
 
         f.write("## Changelog\n")
-        f.write(f"{'OK' if changelog[0] else 'FAIL'}: {changelog[1]}\n\n")
+        f.write(f"{changelog[1]}\n\n")
 
         f.write("## Commits\n")
         if commits[0]:
@@ -118,31 +118,36 @@ def generar_pr_repor(ruta_report: str, titulo, changelog, commits, lint, tests):
         f.write(f"```\n{tests[1]}\n```\n")
 
 
-ruta_base = "../pr_simulation"
-if not os.path.isdir(ruta_base):
-    print("No existe la carpeta pr_simulation")
-    sys.exit(1)
-# iteramos sobre cada carpeta de PR y lo valida
-for nombre_carpeta in sorted(os.listdir(ruta_base)):
-    ruta_pr = os.path.join(ruta_base, nombre_carpeta)
-    if not os.path.isdir(ruta_pr):
-        continue
+def main():
+    ruta_base = "../pr_simulation"
+    if not os.path.isdir(ruta_base):
+        print("No existe la carpeta pr_simulation")
+        sys.exit(1)
+    # iteramos sobre cada carpeta de PR y lo valida
+    for nombre_carpeta in sorted(os.listdir(ruta_base)):
+        ruta_pr = os.path.join(ruta_base, nombre_carpeta)
+        if not os.path.isdir(ruta_pr):
+            continue
 
-    print(f"\nValidando PR {nombre_carpeta}")
+        print(f"\nValidando PR {nombre_carpeta}")
 
-    titulo = validar_titulo(ruta_pr)
-    changelog = verificiar_changelog(ruta_pr)
-    commits = validar_commits(ruta_pr)
-    lint = ejecutar_lint()
-    tests = ejecutar_tests()
+        titulo = validar_titulo(ruta_pr)
+        changelog = verificar_changelog(ruta_pr)
+        commits = validar_commits(ruta_pr)
+        lint = ejecutar_lint()
+        tests = ejecutar_tests()
 
-    generar_pr_repor(
-        os.path.join(ruta_pr, "pr_report.md"),
-        titulo,
-        changelog,
-        commits,
-        lint,
-        tests
-    )
-# indica donde se guardo el pr_report.md
-    print("pr_report.md generado en:", os.path.join(ruta_pr, "pr_report.md"))
+        generar_pr_repor(
+            os.path.join(ruta_pr, "pr_report.md"),
+            titulo,
+            changelog,
+            commits,
+            lint,
+            tests
+        )
+    # indica donde se guardo el pr_report.md
+        print("pr_report.md generado en:", os.path.join(ruta_pr, "pr_report.md"))
+
+
+if __name__ == "__main__":
+    main()
