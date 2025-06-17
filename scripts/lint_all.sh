@@ -70,12 +70,17 @@ if check_tool bandit; then
 	fi
 fi
 
-echo "*********************"
-echo "Resultado Final:"
+echo "==============================================="
+end_time=$(date +%s)
+duration=$((end_time - start_time))
+
+echo -e "${YELLOW} Resumen de linting:${NC}"
+echo " Tiempo de ejecución: ${duration}s"
+
 if [ $errores -eq 1 ]; then
-  echo "Se encontraron errores"
-  exit 1
+	echo -e "${RED} Se encontraron errores de linting. Revisa los mensajes anteriores.${NC}"
+	exit 1
 else
-  echo "Todos los lint pasaron correctamente"
-  exit 0
+	echo -e "${GREEN} Todos los linters pasaron correctamente. ¡Buen trabajo!${NC}"
+	exit 0
 fi
