@@ -32,6 +32,7 @@ def test_titulo_mal_formato():
         ok, msg = validar_titulo(carpeta_pr)
         assert ok is False
 
+
 # test para verificar que el archivo CHANGELOG.md contiene la seccion del PR actual
 def test_changelog_contiene_pr():
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -51,3 +52,24 @@ def test_changelog_contiene_pr():
             os.chdir(carpeta_actual)
 
         assert ok
+
+
+# test para verificar que el archivo CHANGELOG.md no contiene la seccion del PR actual
+def test_changelog_sin_seccion():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        pr_id = "126"
+        carpeta_pr = os.path.join(temp_dir, pr_id)
+        os.makedirs(carpeta_pr)
+
+        changelog_path = os.path.join(temp_dir, "CHANGELOG.md")
+        with open(changelog_path, "w", encoding="utf-8") as f:
+            f.write("# Cambios\n\n## PR 999\n- test PR\n")
+
+        carpeta_actual = os.getcwd()
+        os.chdir(carpeta_pr)
+        try:
+            ok, msg = verificar_changelog(carpeta_pr)
+        finally:
+            os.chdir(carpeta_actual)
+
+        assert ok is False
