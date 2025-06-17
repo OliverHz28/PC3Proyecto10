@@ -68,3 +68,31 @@ def test_incrementar_build_number_existente(json_con_build_number):
         datos = json.load(f)
     assert datos["build_number"] == 6
     assert datos["version"] == 1.0
+
+
+@pytest.fixture
+def json_sin_build_number(tmp_path):
+    """Fixture para pruebas sin build_number"""
+    file_path = tmp_path / "config_sin_build.json"
+    data = {"version": 1.0, "name": "Test App"}
+    with open(file_path, 'w') as f:
+        json.dump(data, f)
+    return file_path
+
+
+def test_incrementar_build_number_nuevo(json_sin_build_number):
+    """Prueba incrementar build_number cuando no existe"""
+    nuevo_build = incrementar_build_number(json_sin_build_number)
+    assert nuevo_build == 1
+    with open(json_sin_build_number) as f:
+        datos = json.load(f)
+    assert datos["build_number"] == 1
+
+
+def test_incrementar_build_number_tipo_incorrecto(tmp_path):
+    """Prueba error cuando build_number no es un número"""
+    file_path = tmp_path / "build_invalido.json"
+    with open(file_path, 'w') as f:
+        json.dump({"build_number": "cinco"}, f)
+    with pytest.raises(TypeError):
+        incrementar_build_number(file_path)
