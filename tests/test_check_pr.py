@@ -1,6 +1,6 @@
 import os
 import tempfile
-from scripts.check_pr import validar_titulo, verificar_changelog
+from scripts.check_pr import validar_titulo, verificar_changelog, validar_commits
 
 
 # Test para verificar que el titulo de PR tiene el formato correcto
@@ -73,3 +73,20 @@ def test_changelog_sin_seccion():
             os.chdir(carpeta_actual)
 
         assert ok is False
+
+
+# Test para verificar que los commits tienen el formato correcto
+def test_commits_todos_validos():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        carpeta_pr = os.path.join(temp_dir, "127")
+        os.makedirs(carpeta_pr)
+
+        commits = """feat[#123]: primer commit
+                    fix[#124]: segundo commit
+                    refactor[#125]: tercer commit"""
+        with open(os.path.join(carpeta_pr, "commits.txt"), "w", encoding="utf-8") as f:
+            f.write(commits)
+
+        ok, errores = validar_commits(carpeta_pr)
+        assert ok is True
+        assert errores == []
