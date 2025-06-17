@@ -2,7 +2,7 @@
 
 import pytest
 import json
-from src.config_modifier import leer_json, incrementar_version
+from src.config_modifier import leer_json, incrementar_version, incrementar_build_number
 
 
 @pytest.fixture
@@ -48,3 +48,23 @@ def test_incrementar_version_tipo_incorrecto(tmp_path):
         json.dump({"version": "uno"}, f)
     with pytest.raises(TypeError):
         incrementar_version(file_path)
+
+
+@pytest.fixture
+def json_con_build_number(tmp_path):
+    """Fixture para pruebas con build_number"""
+    file_path = tmp_path / "config_build.json"
+    data = {"version": 1.0, "build_number": 5, "name": "Proyecto 10"}
+    with open(file_path, 'w') as f:
+        json.dump(data, f)
+    return file_path
+
+
+def test_incrementar_build_number_existente(json_con_build_number):
+    """Prueba para incrementar build_number cuando ya existe"""
+    nuevo_build = incrementar_build_number(json_con_build_number)
+    assert nuevo_build == 6
+    with open(json_con_build_number) as f:
+        datos = json.load(f)
+    assert datos["build_number"] == 6
+    assert datos["version"] == 1.0
