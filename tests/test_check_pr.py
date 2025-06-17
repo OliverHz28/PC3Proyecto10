@@ -1,9 +1,9 @@
 import os
 import tempfile
-from scripts.check_pr import validar_titulo
+from scripts.check_pr import validar_titulo, verificar_changelog
 
 
-# Verifica que el titulo de PR tiene el formato correcto
+# Test para verificar que el titulo de PR tiene el formato correcto
 def test_titulo_valido():
     with tempfile.TemporaryDirectory() as temp_dir:
         pr_id = "123"
@@ -18,7 +18,7 @@ def test_titulo_valido():
         assert ok is True
 
 
-# verificar que el titulo de PR no tiene el formato correcto
+# Test para verificar que el titulo de PR no tiene el formato correcto
 def test_titulo_mal_formato():
     with tempfile.TemporaryDirectory() as temp_dir:
         pr_id = "124"
@@ -31,3 +31,23 @@ def test_titulo_mal_formato():
 
         ok, msg = validar_titulo(carpeta_pr)
         assert ok is False
+
+# test para verificar que el archivo CHANGELOG.md contiene la seccion del PR actual
+def test_changelog_contiene_pr():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        pr_id = "125"
+        carpeta_pr = os.path.join(temp_dir, pr_id)
+        os.makedirs(carpeta_pr)
+
+        changelog_path = os.path.join(temp_dir, "CHANGELOG.md")
+        with open(changelog_path, "w", encoding="utf-8") as f:
+            f.write(f"# Cambios\n\n## PR {pr_id}\n- test PR\n")
+
+        carpeta_actual = os.getcwd()
+        os.chdir(os.path.join(temp_dir, pr_id))
+        try:
+            ok, _ = verificar_changelog(carpeta_pr)
+        finally:
+            os.chdir(carpeta_actual)
+
+        assert ok
