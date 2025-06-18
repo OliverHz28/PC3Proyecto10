@@ -178,3 +178,16 @@ def test_ejecutar_lint_exito():
 
         ok, salida = ejecutar_lint()
         assert ok is True
+
+
+# test para verificar que el linter falla
+def test_ejecutar_lint_error():
+    with patch("subprocess.run") as mock_run:
+        mock_result = MagicMock()
+        mock_result.returncode = 1
+        mock_result.stdout = ""
+        mock_result.stderr = "Error de linting"
+        mock_run.return_value = mock_result
+
+        ok, salida = ejecutar_lint()
+        assert ok is False
