@@ -1,0 +1,6 @@
+test[#29]: crear test_check_pr.py y agregar test para titulo de PR co…
+test[#29]: agregar test para titulo de PR con formato incorrecto
+test[#29]: agregar test para verificar que CHANGELOG.md contenga la s…
+test[#29]: agregar prueba para changelog sin seccion del PR
+test[#29]: agregar test para verificar que los commits tengan el formato correcto
+test[#29]: agregar test para commits con errores de formato
