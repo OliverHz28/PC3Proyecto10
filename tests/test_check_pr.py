@@ -44,6 +44,21 @@ def test_archivo_inexistente():
         assert ok is False
 
 
+# test para verificar que el archivo de titulo del PR esta vacio
+def test_titulo_vacio():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        pr_id = "125"
+        carpeta_pr = os.path.join(temp_dir, pr_id)
+        os.makedirs(carpeta_pr)
+        archivo = os.path.join(carpeta_pr, f"pr_{pr_id}_title.txt")
+
+        with open(archivo, "w", encoding="utf-8") as f:
+            f.write("   \n")
+
+        ok, msg = validar_titulo(carpeta_pr)
+        assert ok is False
+
+
 # test para verificar que el archivo CHANGELOG.md contiene la seccion del PR actual
 def test_changelog_contiene_pr():
     with tempfile.TemporaryDirectory() as temp_dir:
