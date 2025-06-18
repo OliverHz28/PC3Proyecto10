@@ -101,6 +101,25 @@ def test_changelog_sin_seccion():
         assert ok is False
 
 
+# No existe el archivo CHANGELOG.md
+def test_changelog_no_existe():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        pr_id = "201"
+        carpeta_pr = os.path.join(temp_dir, pr_id)
+        os.makedirs(carpeta_pr)
+
+        # No se crea CHANGELOG.md
+
+        carpeta_actual = os.getcwd()
+        os.chdir(carpeta_pr)
+        try:
+            ok, msg = verificar_changelog(carpeta_pr)
+        finally:
+            os.chdir(carpeta_actual)
+
+        assert ok is False
+
+
 # Test para verificar que los commits tienen el formato correcto
 def test_commits_todos_validos():
     with tempfile.TemporaryDirectory() as temp_dir:
