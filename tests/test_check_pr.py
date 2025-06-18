@@ -1,6 +1,8 @@
 import os
 import tempfile
-from scripts.check_pr import validar_titulo, verificar_changelog, validar_commits
+from scripts.check_pr import (validar_titulo, verificar_changelog,
+                              validar_commits, ejecutar_lint)
+from unittest.mock import patch, MagicMock
 
 
 # Test para verificar que el titulo de PR tiene el formato correcto
@@ -164,3 +166,15 @@ def test_validar_commits_archivo_inexistente():
 
         ok, errores = validar_commits(carpeta_pr)
         assert ok is False
+
+
+# test para ejecutar el linter y verificar que se ejecuta correctamente
+def test_ejecutar_lint_exito():
+    with patch("subprocess.run") as mock_run:
+        mock_result = MagicMock()
+        mock_result.returncode = 0
+        mock_result.stdout = "Lint exitoso"
+        mock_run.return_value = mock_result
+
+        ok, salida = ejecutar_lint()
+        assert ok is True
