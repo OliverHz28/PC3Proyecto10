@@ -18,12 +18,8 @@ def validar_titulo(carpeta_pr: str) -> Tuple[bool, str]:
 
     if not titulo:
         return False, f"FAIL: El archivo {archivo_titulo} esta vacio"
-
-<<<<<<< feature/validar-pr
-    patron = re.compile(r"^(feat|fix|docs|style|refactor|perf|test|chore|merge|)\[#\d+\]: .+")
-=======
-    patron = re.compile(r"^[A-Z]{2,5}-\d+: .+")
->>>>>>> develop
+    patron = re.compile(
+        r"^(feat|fix|docs|style|refactor|perf|test|chore|merge|)\[#\d+\]: .+")
     if patron.match(titulo):
         return True, "OK"
 
@@ -54,11 +50,8 @@ def validar_commits(carpeta_pr: str) -> Tuple[bool, List[str]]:
         return False, ["no existe el archivo commits.txt"]
 
     incorrectos: List[str] = []
-<<<<<<< feature/validar-pr
-    patron = re.compile(r"^(feat|fix|docs|style|refactor|perf|test|chore|merge)\[#\d+\]: .+")
-=======
-    patron = re.compile(r"^(feat|fix|docs|style|refactor|perf|test|chore)\[#\d+\]: .+")
->>>>>>> develop
+    patron = re.compile(
+        r"^(feat|fix|docs|style|refactor|perf|test|chore|merge)\[#\d+\]: .+")
 
     for fila, commit in enumerate(open(archivo_commits, encoding="utf-8"), 1):
         if not patron.match(commit.strip()):
@@ -110,11 +103,7 @@ def generar_pr_repor(ruta_report: str, titulo, changelog, commits, lint, tests):
 
         f.write("## Commits\n")
         if commits[0]:
-<<<<<<< feature/validar-pr
             f.write("OK\n\n")
-=======
-            f.write("OK: Todos los commits son validos\n\n")
->>>>>>> develop
         else:
             f.write("FAIL: Commits con errores de formato:\n")
             for error in commits[1]:
