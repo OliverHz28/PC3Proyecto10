@@ -14,7 +14,7 @@ def test_titulo_valido():
         archivo = os.path.join(carpeta_pr, f"pr_{pr_id}_title.txt")
 
         with open(archivo, "w", encoding="utf-8") as f:
-            f.write("PROY-123: primer pull request")
+            f.write("feat[#123]: primer pull request")
 
         ok, msg = validar_titulo(carpeta_pr)
         assert ok is True
