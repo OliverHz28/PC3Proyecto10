@@ -12,7 +12,7 @@ def test_titulo_valido():
         archivo = os.path.join(carpeta_pr, f"pr_{pr_id}_title.txt")
 
         with open(archivo, "w", encoding="utf-8") as f:
-            f.write("PROY-123: primer pull request")
+            f.write("feat[#123]: primer pull request")
 
         ok, msg = validar_titulo(carpeta_pr)
         assert ok is True
@@ -28,6 +28,17 @@ def test_titulo_mal_formato():
 
         with open(archivo, "w", encoding="utf-8") as f:
             f.write("PR que no tiene el formato correcto")  # Mal formato
+
+        ok, msg = validar_titulo(carpeta_pr)
+        assert ok is False
+
+
+# No existe el archivo PR ID
+def test_archivo_inexistente():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        pr_id = "124"
+        carpeta_pr = os.path.join(temp_dir, pr_id)
+        os.makedirs(carpeta_pr)
 
         ok, msg = validar_titulo(carpeta_pr)
         assert ok is False
