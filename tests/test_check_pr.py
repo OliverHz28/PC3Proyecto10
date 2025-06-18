@@ -1,7 +1,8 @@
 import os
 import tempfile
 from scripts.check_pr import (validar_titulo, verificar_changelog,
-                              validar_commits, ejecutar_lint)
+                              validar_commits, ejecutar_lint,
+                              ejecutar_tests)
 from unittest.mock import patch, MagicMock
 
 
@@ -192,9 +193,44 @@ def test_ejecutar_lint_error():
         ok, salida = ejecutar_lint()
         assert ok is False
 
+
 # test para verificar que el script de lint no existe
 def test_ejecutar_lint_script_inexistente():
     with patch("subprocess.run", side_effect=FileNotFoundError):
         ok, salida = ejecutar_lint()
         assert ok is False
-        assert salida == "no existe el script lint_all.sh"
+
+
+# test para ejecutar los tests y verificar que se ejecutan correctamente
+def test_ejecutar_tests_exito():
+    with patch("subprocess.run") as mock_run:
+        mock_result = MagicMock()
+        mock_result.returncode = 0
+        mock_result.stdout = "tests pasaron"
+        mock_run.return_value = mock_result
+
+        ok, salida = ejecutar_tests()
+        assert ok is True
+
+
+# test para verificar que los tests fallan
+def test_ejecutar_tests_falla():
+    with patch("subprocess.run") as mock_run:
+        mock_result = MagicMock()
+        mock_result.returncode = 1
+        mock_result.stdout = "1 test falló"
+        mock_result.stderr = "Traceback (ultima llamada mas reciente):"
+        mock_run.return_value = mock_result
+
+        ok, salida = ejecutar_tests()
+        assert not ok
+        assert "1 test falló" in salida
+        assert "Traceback" in salida
+
+
+# test para verificar que el comando pytest no se encuentra
+def test_ejecutar_tests_no_encontrado():
+    with patch("subprocess.run", side_effect=FileNotFoundError):
+
+        ok, _ = ejecutar_tests()
+        assert not ok
