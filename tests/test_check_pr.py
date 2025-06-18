@@ -15,7 +15,6 @@ def test_titulo_valido():
 
         with open(archivo, "w", encoding="utf-8") as f:
             f.write("feat[#123]: primer pull request")
-
         ok, msg = validar_titulo(carpeta_pr)
         assert ok is True
 
