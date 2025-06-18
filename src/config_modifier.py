@@ -1,7 +1,10 @@
 import json
 import os
 
-from logger import obtener_logger
+try:
+    from src.logger import obtener_logger
+except ModuleNotFoundError:
+    from logger import obtener_logger
 
 logger = obtener_logger(log_file="logs/config_modifier.log")
 
