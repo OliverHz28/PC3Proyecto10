@@ -2,7 +2,7 @@ import os
 import tempfile
 from scripts.check_pr import (validar_titulo, verificar_changelog,
                               validar_commits, ejecutar_lint,
-                              ejecutar_tests)
+                              ejecutar_tests, generar_pr_repor)
 from unittest.mock import patch, MagicMock
 
 
@@ -228,9 +228,32 @@ def test_ejecutar_tests_falla():
         assert "Traceback" in salida
 
 
-# test para verificar que el comando pytest no se encuentra
+# test para verificar que pytest no se encuentra
 def test_ejecutar_tests_no_encontrado():
     with patch("subprocess.run", side_effect=FileNotFoundError):
 
         ok, _ = ejecutar_tests()
         assert not ok
+
+
+# test para verificar que se genera el reporte de PR correctamente
+def test_generar_reporte_contenido(tmp_path):
+    ruta = tmp_path / "reporte.md"
+    datos = {
+        "titulo": (True, "OK"),
+        "changelog": (False, "FALLO: no existe CHANGELOG.md"),
+        "commits": (False, ["línea 2: 'mal commit'"]),
+        "lint": (True, "salida del linter"),
+        "tests": (False, "falló la prueba 3"),
+    }
+
+    generar_pr_repor(
+        str(ruta),
+        datos["titulo"],
+        datos["changelog"],
+        datos["commits"],
+        datos["lint"],
+        datos["tests"],
+    )
+
+    assert ruta.exists()
