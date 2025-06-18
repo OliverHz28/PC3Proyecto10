@@ -1,0 +1,8 @@
+merge[#4]: feature/config-modifier a feature/develop (#6)
+merge[#2]: feature/test a feature/develop (#7)
+merge[#3]: feature/workflow a feature/develop (#9)
+merge[#8]: feature/lint-hook a feature/develop (#10)
+merge[#2]: feature/tests (#11)
+feat[#22]: agregar pytest.ini para la configuracion de tests
+refactor[#22]: corregir lint_all.sh
+docs[#22]: actualizar README con guias de uso completas

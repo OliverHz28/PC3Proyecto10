@@ -18,7 +18,6 @@ def validar_titulo(carpeta_pr: str) -> Tuple[bool, str]:
 
     if not titulo:
         return False, f"FAIL: El archivo {archivo_titulo} esta vacio"
-
     patron = re.compile(r"^(feat|fix|docs|style|refactor|perf|test|chore|merge)\[#\d+\]: .+")
     if patron.match(titulo):
         return True, "OK"
@@ -102,7 +101,7 @@ def generar_pr_repor(ruta_report: str, titulo, changelog, commits, lint, tests):
 
         f.write("## Commits\n")
         if commits[0]:
-            f.write("OK: Todos los commits son validos\n\n")
+            f.write("OK\n\n")
         else:
             f.write("FAIL: Commits con errores de formato:\n")
             for error in commits[1]:
