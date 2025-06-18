@@ -18,6 +18,32 @@ def test_titulo_valido():
         assert ok is True
 
 
+# No existe el archivo PR ID
+def test_archivo_inexistente():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        pr_id = "124"
+        carpeta_pr = os.path.join(temp_dir, pr_id)
+        os.makedirs(carpeta_pr)
+
+        ok, msg = validar_titulo(carpeta_pr)
+        assert ok is False
+
+
+# El archivo existe pero esta vacío
+def test_titulo_vacio():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        pr_id = "125"
+        carpeta_pr = os.path.join(temp_dir, pr_id)
+        os.makedirs(carpeta_pr)
+        archivo = os.path.join(carpeta_pr, f"pr_{pr_id}_title.txt")
+
+        with open(archivo, "w", encoding="utf-8") as f:
+            f.write("   \n")
+
+        ok, msg = validar_titulo(carpeta_pr)
+        assert ok is False
+
+
 # Test para verificar que el titulo de PR no tiene el formato correcto
 def test_titulo_mal_formato():
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -90,6 +116,7 @@ def test_commits_todos_validos():
         ok, errores = validar_commits(carpeta_pr)
         assert ok is True
         assert errores == []
+
 
 # Test para verificar que los commits tienen errores de formato
 def test_commits_con_errores():
