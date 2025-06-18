@@ -101,6 +101,16 @@ def test_changelog_sin_seccion():
         assert ok is False
 
 
+# Archivo de commits no existe
+def test_validar_commits_archivo_inexistente():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        carpeta_pr = os.path.join(temp_dir, "201")
+        os.makedirs(carpeta_pr)
+
+        ok, errores = validar_commits(carpeta_pr)
+        assert ok is False
+
+
 # No existe el archivo CHANGELOG.md
 def test_changelog_no_existe():
     with tempfile.TemporaryDirectory() as temp_dir:
