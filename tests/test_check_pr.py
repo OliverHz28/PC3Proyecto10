@@ -1,6 +1,8 @@
 import os
 import tempfile
-from scripts.check_pr import validar_titulo, verificar_changelog, validar_commits
+from scripts.check_pr import (validar_titulo, verificar_changelog,
+                              validar_commits, ejecutar_lint)
+from unittest.mock import patch, MagicMock
 
 
 # Test para verificar que el titulo de PR tiene el formato correcto
@@ -164,3 +166,35 @@ def test_commits_con_errores():
         assert len(errores) == 2
         assert "fila 1" in errores[0]
         assert "fila 2" in errores[1]
+
+
+# test para ejecutar el linter y verificar que se ejecuta correctamente
+def test_ejecutar_lint_exito():
+    with patch("subprocess.run") as mock_run:
+        mock_result = MagicMock()
+        mock_result.returncode = 0
+        mock_result.stdout = "Lint exitoso"
+        mock_run.return_value = mock_result
+
+        ok, salida = ejecutar_lint()
+        assert ok is True
+
+
+# test para verificar que el linter falla
+def test_ejecutar_lint_error():
+    with patch("subprocess.run") as mock_run:
+        mock_result = MagicMock()
+        mock_result.returncode = 1
+        mock_result.stdout = ""
+        mock_result.stderr = "Error de linting"
+        mock_run.return_value = mock_result
+
+        ok, salida = ejecutar_lint()
+        assert ok is False
+
+# test para verificar que el script de lint no existe
+def test_ejecutar_lint_script_inexistente():
+    with patch("subprocess.run", side_effect=FileNotFoundError):
+        ok, salida = ejecutar_lint()
+        assert ok is False
+        assert salida == "no existe el script lint_all.sh"
