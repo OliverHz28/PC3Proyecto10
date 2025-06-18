@@ -154,3 +154,13 @@ def test_commits_con_errores():
         assert len(errores) == 2
         assert "fila 1" in errores[0]
         assert "fila 2" in errores[1]
+
+
+# Archivo de commits no existe
+def test_validar_commits_archivo_inexistente():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        carpeta_pr = os.path.join(temp_dir, "303")
+        os.makedirs(carpeta_pr)
+
+        ok, errores = validar_commits(carpeta_pr)
+        assert ok is False
