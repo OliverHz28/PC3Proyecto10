@@ -1,2 +1,4 @@
 pc3
 __pycache__
+logs
+.coverage
