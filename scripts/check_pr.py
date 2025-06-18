@@ -18,8 +18,7 @@ def validar_titulo(carpeta_pr: str) -> Tuple[bool, str]:
 
     if not titulo:
         return False, f"FAIL: El archivo {archivo_titulo} esta vacio"
-    patron = re.compile(
-        r"^(feat|fix|docs|style|refactor|perf|test|chore|merge|)\[#\d+\]: .+")
+    patron = re.compile(r"^(feat|fix|docs|style|refactor|perf|test|chore|merge)\[#\d+\]: .+")
     if patron.match(titulo):
         return True, "OK"
 
@@ -50,8 +49,7 @@ def validar_commits(carpeta_pr: str) -> Tuple[bool, List[str]]:
         return False, ["no existe el archivo commits.txt"]
 
     incorrectos: List[str] = []
-    patron = re.compile(
-        r"^(feat|fix|docs|style|refactor|perf|test|chore|merge)\[#\d+\]: .+")
+    patron = re.compile(r"^(feat|fix|docs|style|refactor|perf|test|chore|merge)\[#\d+\]: .+")
 
     for fila, commit in enumerate(open(archivo_commits, encoding="utf-8"), 1):
         if not patron.match(commit.strip()):
