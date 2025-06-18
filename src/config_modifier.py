@@ -72,7 +72,7 @@ def incrementar_build_number(file_path):
     return config["build_number"]
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
 
     file_path = "config.json"
     try:

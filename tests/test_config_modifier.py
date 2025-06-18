@@ -96,3 +96,23 @@ def test_incrementar_build_number_tipo_incorrecto(tmp_path):
         json.dump({"build_number": "cinco"}, f)
     with pytest.raises(TypeError):
         incrementar_build_number(file_path)
+
+
+def test_leer_json_archivo_inexistente():
+    """
+    Cuando el archivo no existe debe lanzarse FileNotFoundError
+    """
+    with pytest.raises(FileNotFoundError):
+        leer_json("archivo_que_no_existe.json")
+
+
+def test_incrementar_version_sin_campo_version(tmp_path):
+    """
+    Si el JSON no contiene la clave 'version' debe lanzarse KeyError
+    """
+    path = tmp_path / "sin_version.json"
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump({"name": "App sin versión"}, f)
+
+    with pytest.raises(KeyError):
+        incrementar_version(path)
