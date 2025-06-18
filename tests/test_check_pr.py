@@ -80,6 +80,25 @@ def test_changelog_contiene_pr():
         assert ok
 
 
+# No existe el archivo CHANGELOG.md
+def test_changelog_no_existe():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        pr_id = "201"
+        carpeta_pr = os.path.join(temp_dir, pr_id)
+        os.makedirs(carpeta_pr)
+
+        # No se crea CHANGELOG.md
+
+        cwd_original = os.getcwd()
+        os.chdir(carpeta_pr)
+        try:
+            ok, msg = verificar_changelog(carpeta_pr)
+        finally:
+            os.chdir(cwd_original)
+
+        assert ok is False
+
+
 # test para verificar que el archivo CHANGELOG.md no contiene la seccion del PR actual
 def test_changelog_sin_seccion():
     with tempfile.TemporaryDirectory() as temp_dir:
