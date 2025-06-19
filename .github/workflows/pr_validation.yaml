@@ -1,19 +1,53 @@
-name: PR Validation  
+name: PR Validation Pipeline
 
 on:
-  push:              
-  pull_request:     
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      pr_ids:
+        description: 'Lista de PR IDs simulados (["13","12"])'
+        required: true
+        default: '["local"]'
 
 jobs:
-  placeholder:
-    runs-on: ubuntu-latest   
+  validate-pr:
+    runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+        pr_id: ${{ github.event_name == 'workflow_dispatch'
+                    && fromJson(inputs.pr_ids)
+                    || fromJson('["local"]') }}
     steps:
-      - name: Paso de ejemplo (Placeholder)  # el job placeholder es uno vacio
-        run: echo "Workflow placeholder"
+      - name: Checkout código
+        uses: actions/checkout@v2
 
-      # Aqui se pueden agregar pasos siguientes, como:
-      # - Validacion de formato de codigo (linter)
-      # - Ejecucion de pruebas unitarias
-      # - Validacion de la construccion del proyecto (build)
-  
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Instalar dependencias
+        run: |
+          pip install pytest pytest-cov flake8 bandit
+          sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Ejecutar linting
+        run: |
+          chmod +x ./scripts/lint_all.sh
+          ./scripts/lint_all.sh
+
+
+      - name: Ejecutar pruebas
+        run: pytest --cov=src --cov=scripts --cov-fail-under=80
+
+      - name: Preparar carpeta pr_simulation
+        run: |
+          mkdir -p pr_simulation/${{ matrix.pr_id }}
+
+      - name: Ejecutar validacion (check_pr.py)
+        run: |
+          python3 scripts/check_pr.py

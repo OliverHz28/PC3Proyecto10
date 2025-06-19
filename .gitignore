@@ -1,2 +1,6 @@
 pc3
 __pycache__
+logs
+.coverage
+pr_simulation/**/pr_report.md
+bandit_report.txt
