@@ -61,12 +61,12 @@ fi
 if check_tool bandit; then
 	echo "*********************"
 	echo "Ejecutando bandit"
-	if bandit -r src/ > bandit_report.txt; then
+	if bandit -r src/ -f json -o bandit_report.json; then
 		echo -e "${GREEN} No se encontraron errores con bandit${NC}"
 	else
 		echo -e "${RED} bandit encontró vulnerabilidades${NC}"
 		errores=1
-		cat bandit_report.txt
+		cat bandit_report.json
 	fi
 fi
 
