@@ -484,6 +484,66 @@ Continuando con los pasos del  sprint 1, a continuacion seguir los siguientes pa
   ```bash
   act pull_request
   ```
+
+## Sprint 3
+
+Realizado del 18 al 19 de junio de 2025, se compone de los siguiente:
+
+### Objetivos
+
+* Refinar validaciones y documentación:
+
+  - Mejorar **lint_all.sh** para:
+
+     * Incluir `bandit -r src/` y reportar vulnerabilidades (Fall back si > 0).
+     * Actualizar `.flake8` con reglas específicas de estilo de equipo (ej., max-line-length = 100, no ignorar errores).
+  - Extender **`check_pr.py`** para:
+
+     * Verificar que no existan tickets duplicados en `CHANGELOG.md` (evitar doble mención de `<id>`).
+     * Validar que el PR description (`pr_<id>_body.md`) incluya al menos 200 caracteres y contenga un "Resumen" y "Cambios" secciones.
+     * Incluir en `pr_report.md` una sección "Mejoras sugeridas" si se detectan líneas de código duplicadas (usar Python para buscar duplicados en `src/`).
+  - Ajustar **`pr_validation.yaml`** para:
+
+     * Agregar un job `security-scan` que ejecute `bandit` y `shellcheck`, y falle si hay vulnerabilidades críticas.
+     * Enviar notificación simulada al equipo (imprimir en consola) si hay fallos de seguridad.
+  - Completar **logs** en `pr_simulation/<id>/logs/`:
+
+     * Guardar salida de `lint_all.sh` en `logs/lint.log`.
+     * Guardar salida de `pytest` en `logs/tests.log`.
+     * Guardar `bandit_report.json` si aplica.
+
+### 1. Ramas
+
+- `feature/workflow-scan`, desarrollado por **Edy Serrano** 
+- `feature/validar-pr-completo`, desarrollado por **Germain Choquechambi** 
+- `feature/logs-pr`, desarrollado por **Frank Hinojosa** 
+
+### 2. Issues
+
+- [#39](#41-Registro-de-lint_all.sh) Registro de lint_all.sh
+- [#41](#41-Job-de-Security-Scan-en-CI) Job de Security Scan en CI
+- [#43](#43-Automatizacion-de-revisiones-de-PR:-estructura,-cambios-y-mejoras-sugeridas) Automatizacion de revisiones de PR: estructura, cambios y mejoras sugeridas
+- [#44](#41-Registro-de-salida-de-Pytest-para-simulaciones-de-PR) Registro de salida de Pytest para simulaciones de PR
+- [#45](#41-Registro-de-reporte-de-Bandit) Registro de reporte de Bandit
+ 
+
+### 3. Pull Request
+
+#### 3.1 Aceptados
+- [#46](https://github.com/OliverHz28/PC3Proyecto10/pull/46) : feat[[#43]](#46-Feature/validar-pr-completo): Feature/validar pr completo
+- [#47](https://github.com/OliverHz28/PC3Proyecto10/pull/47) : feat[[#41]](#47-feature/workflow-scan-a-rama-develop): Feature/workflow scan a rama develop 
+- [#48](https://github.com/OliverHz28/PC3Proyecto10/pull/48) : feat[[#45]](#45-merge-Feature/logs-pr-a-rama-develop) :
+merge Feature/logs-pr a rama develop
+
+## Ejecucion del Proyecto
+
+Continuando con los pasos del  sprint 2, a continuacion seguir los siguiente paso:
+
+- Ejecucion del act 
+  ```bash
+  act pull_request
+  ```
+
 ## Demostracion en video
 
-[Sprint 3 (Dia 3: 9/06/2025) Grupo 6 Proyecto 10 ](https://www.youtube.com/watch?v=EdfvsKFbDEw)
+[Sprint 3 (19/06/2025) Grupo 6 Proyecto 10 ](https://www.youtube.com/watch?v=EdfvsKFbDEw)

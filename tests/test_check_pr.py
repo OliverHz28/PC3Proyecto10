@@ -2,7 +2,8 @@ import os
 import tempfile
 from scripts.check_pr import (validar_titulo, verificar_changelog,
                               validar_commits, ejecutar_lint,
-                              ejecutar_tests, generar_pr_repor)
+                              ejecutar_tests, generar_pr_repor,
+                              validar_pr_body, detectar_lineas_duplicadas_py)
 from unittest.mock import patch, MagicMock
 
 
@@ -245,6 +246,8 @@ def test_generar_reporte_contenido(tmp_path):
         "commits": (False, ["línea 2: 'mal commit'"]),
         "lint": (True, "salida del linter"),
         "tests": (False, "falló la prueba 3"),
+        "pr_body": (False, "FALLO: falta la sección 'Resumen'"),
+        "sugerencias": ["'import os' se repite en config_modifier.py y logger.py"]
     }
 
     generar_pr_repor(
@@ -254,6 +257,62 @@ def test_generar_reporte_contenido(tmp_path):
         datos["commits"],
         datos["lint"],
         datos["tests"],
+        datos["pr_body"],
+        datos["sugerencias"]
     )
 
     assert ruta.exists()
+
+
+# test que verifica que el body de menos de 200  caracteres falla la validacion
+def test_body_contenido_corto():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        pr_id = "102"
+        carpeta_pr = os.path.join(temp_dir, pr_id)
+        os.makedirs(carpeta_pr)
+
+        ruta = os.path.join(carpeta_pr, f"pr_{pr_id}_body.md")
+        with open(ruta, "w", encoding="utf-8") as f:
+            f.write("Texto muy corto")
+
+        ok, _ = validar_pr_body(carpeta_pr)
+        assert not ok
+
+
+# test para verificar que el body de PR tiene la seccion Resumen
+def test_body_sin_seccion_resumen():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        pr_id = "103"
+        carpeta_pr = os.path.join(temp_dir, pr_id)
+        os.makedirs(carpeta_pr)
+
+        texto = "a" * 201 + "\n\n## Cambios\n- Se agregó tal cosa\n"
+        ruta = os.path.join(carpeta_pr, f"pr_{pr_id}_body.md")
+        with open(ruta, "w", encoding="utf-8") as f:
+            f.write(texto)
+
+        ok, _ = validar_pr_body(carpeta_pr)
+        assert not ok
+
+
+def test_detectar_lineas_duplicadas(tmp_path, monkeypatch):
+    src_path = tmp_path / "src"
+    src_path.mkdir()
+
+    (src_path / "a.py").write_text("""
+                    def saludar():
+                        print("Hola mundo")
+                        return True
+                    """)
+
+    (src_path / "b.py").write_text("""
+                    def despedir():
+                        print("Hola mundo")
+                        return False
+                    """)
+
+    monkeypatch.setattr("scripts.check_pr.os.path.abspath", lambda path: str(src_path))
+
+    duplicadas = detectar_lineas_duplicadas_py()
+
+    assert duplicadas
