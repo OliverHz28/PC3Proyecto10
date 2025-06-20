@@ -20,6 +20,7 @@ def validar_titulo(carpeta_pr: str) -> Tuple[bool, str]:
         return False, f"FAIL: El archivo {archivo_titulo} esta vacio"
     patron = re.compile(
         r"^(feat|fix|docs|style|refactor|perf|test|chore|merge)\[#\d+\]: .+")
+    patron = re.compile(r"^(feat|fix|docs|style|refactor|perf|test|chore|merge)\[#\d+\]: .+")
     if patron.match(titulo):
         return True, "OK"
 
@@ -48,6 +49,9 @@ def validar_pr_body(carpeta_pr: str) -> Tuple[bool, str]:
 
 # Verifica que el archivo CHANGELOG.md contenga una seccion para el PR actual
 def verificar_changelog(carpeta_pr: str) -> Tuple[bool, str]:
+# Verifica que el archivo CHANGELOG.md contenga una seccion para el PR actual
+def verificar_changelog(carpeta_pr: str) -> Tuple[bool, str]:
+
     archivo_changelog = "CHANGELOG.md"
 
     if not os.path.isfile(archivo_changelog):
@@ -77,6 +81,13 @@ def verificar_changelog(carpeta_pr: str) -> Tuple[bool, str]:
         )
 
     return True, "OK"
+    contenido = open(archivo_changelog, encoding="utf-8").read()
+    seccion_pr = f"## PR {os.path.basename(carpeta_pr)}"
+
+    if seccion_pr in contenido:
+        return True, "OK"
+
+    return False, f"FAIL: No se encontro la seccion '{seccion_pr}'"
 
 
 # Verifica que todos los commits en commits.txt sigan un patron
@@ -88,6 +99,7 @@ def validar_commits(carpeta_pr: str) -> Tuple[bool, List[str]]:
     incorrectos: List[str] = []
     patron = re.compile(
         r"^(feat|fix|docs|style|refactor|perf|test|chore|merge)\[#\d+\]: .+")
+    patron = re.compile(r"^(feat|fix|docs|style|refactor|perf|test|chore|merge)\[#\d+\]: .+")
 
     for fila, commit in enumerate(open(archivo_commits, encoding="utf-8"), 1):
         if not patron.match(commit.strip()):
@@ -162,6 +174,7 @@ def ejecutar_tests() -> Tuple[bool, str]:
 # Genera el reporte de validacion del PR en formato Markdown
 def generar_pr_repor(ruta_report: str, titulo, changelog, commits,
                      lint, tests, pr_body, sugerencias):
+def generar_pr_repor(ruta_report: str, titulo, changelog, commits, lint, tests):
     with open(ruta_report, "w", encoding="utf-8") as f:
         f.write("# Informe de Validacion\n\n")
         f.write("## Titulo\n")
@@ -199,8 +212,7 @@ def generar_pr_repor(ruta_report: str, titulo, changelog, commits,
                 f.write(f"- {sugerencia}\n")
 
 
-def main():  # pragma: no cover
-
+def main(): # pragma: no cover
     ruta_base = "pr_simulation"
     if not os.path.isdir(ruta_base):
         print("No existe la carpeta pr_simulation")
@@ -235,5 +247,5 @@ def main():  # pragma: no cover
         print("pr_report.md generado en:", os.path.join(ruta_pr, "pr_report.md"))
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__": # pragma: no cover
     main()
