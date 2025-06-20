@@ -4,6 +4,7 @@ from scripts.check_pr import (validar_titulo, verificar_changelog,
                               validar_commits, ejecutar_lint,
                               ejecutar_tests, generar_pr_repor,
                               validar_pr_body, detectar_lineas_duplicadas_py)
+
 from unittest.mock import patch, MagicMock
 
 
@@ -316,3 +317,6 @@ def test_detectar_lineas_duplicadas(tmp_path, monkeypatch):
     duplicadas = detectar_lineas_duplicadas_py()
 
     assert duplicadas
+    )
+
+    assert ruta.exists()
