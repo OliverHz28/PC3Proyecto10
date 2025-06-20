@@ -74,7 +74,7 @@ def test_changelog_contiene_pr():
             f.write(f"# Cambios\n\n## PR {pr_id}\n- test PR\n")
 
         carpeta_actual = os.getcwd()
-        os.chdir(os.path.join(temp_dir, pr_id))
+        os.chdir(temp_dir)
         try:
             ok, _ = verificar_changelog(carpeta_pr)
         finally:

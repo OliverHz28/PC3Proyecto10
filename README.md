@@ -10,7 +10,7 @@
 
 ## Descripcion
 
-**Proyecto 10 - Grupo 6**, enfocado en simular un flujo Pull Request completo y la revisión de código automatizada usando:
+**[Proyecto 10 - Grupo 6](https://github.com/OliverHz28/PC3Proyecto10)**, enfocado en simular un flujo Pull Request completo y la revisión de código automatizada usando:
 
 - Git hooks
 - Linters y análisis estático
@@ -32,7 +32,7 @@ Realizado del 7 al 9 de junio de 2025, se compone de los siguiente:
 - `feature/workflows`, desarrollado por **Edy Serrano** 
 - `feature/config-modifier`, desarrollado por **Frank Hinojosa** 
 
-### 2. Isues
+### 2. Issues
 
 - [#2](#2-pruebas-automatizadas) Pruebas automatizadas
 - [#3](#3-crear-workflow) Crear workflow 
@@ -211,4 +211,276 @@ Para trabajar con el proyecto, realiza los pasos a continuacion.
     ./scripts/lint_all.sh 
       ```
 
+## Sprint 2
 
+Realizado del 13 al 17 de junio de 2025, se compone de los siguiente:
+
+### 1. Ramas
+
+- `feature/workflow-pull_request`, desarrollado por **Edy Serrano** 
+- `feature/mejora-lint`, desarrollado por **Edy Serrano** 
+- `feature/extender-workflow`, desarrollado por **Edy Serrano** 
+- `feature/validar-pr`, desarrollado por **Germain Choquechambi** 
+- `feature/tests-check-pr`, desarrollado por **Germain Choquechambi** 
+- `feature/nuevos-test-check-pr`, desarrollado por **Germain Choquechambi** 
+- `feature/AUTO_INCR_VERSION`, desarrollado por **Frank Hinojosa** 
+- `feature/ADD_LOGGING`, desarrollado por **Frank Hinojosa** 
+
+
+### 2. Issues
+
+- [#13](#13-añadir-incremento-automatico-de-build_number-en-config_modifierpy) Añadir incremento automatico de build_number en config_modifier.py
+- [#14](#14-añadir-modulo-de-logging) Añadir modulo de logging 
+- [#15](#15-validar-el-titulo-de-pr) Validar el titulo de PR 
+- [#16](#16-verificar-que-el-changelog-este-actualizado) Verificar que el changelog este actualizado
+- [#17](#17-validar-formato-de-los-mensajes-de-commit) Validar formato de los mensajes de commit
+- [#18](#18-generar-informe-de-validacion) Generar informe de validacion 
+- [#19](#19-extender-workflow-de-actions-para-prs) Extender workflow de Actions para PRs
+- [#20](#20-mejorar-lint_allsh-con-manejo-de-errores) Mejorar lint_all.sh con manejo de errores
+- [#21](#21-configurar-simulación-con-act-pull_request) Mejorar lint_all.sh con manejo de errores
+- [#24](#24-configurar-simulación-con-act-pull_request) [Epic] Automatizacion de validacion de Pull Requests
+- [#29](#29-agregar-pruebas-unitarias-para-check_prpy) Agregar pruebas unitarias para check_pr.py
+
+### 3. Pull Request
+
+#### 3.1 Aceptados
+- [#25](https://github.com/OliverHz28/PC3Proyecto10/pull/25) : feat[[#24]](#24-configurar-simulación-con-act-pull_request): Automatizar validacion de PRs con check_pr.py
+- [#28](https://github.com/OliverHz28/PC3Proyecto10/pull/28) : feat[[#13]](#13-añadir-incremento-automatico-de-build_number-en-config_modifierpy): merge feature/AUTO_INCR_VERSION a develop
+- [#31](https://github.com/OliverHz28/PC3Proyecto10/pull/31) : feat[[#21]](#21-configurar-simulación-con-act-pull_request) :
+Feature/workflow pull request
+- [#32](https://github.com/OliverHz28/PC3Proyecto10/pull/32) : Feature/mejora lint
+- [#33](https://github.com/OliverHz28/PC3Proyecto10/pull/33) : docs[[#24]](#24-configurar-simulación-con-act-pull_request) :
+crear CHANGELOG y agregar reportes de simulacion de PRs
+- [#34](https://github.com/OliverHz28/PC3Proyecto10/pull/34) : merge[[#14]](#14-añadir-modulo-de-logging) :
+feature/ADD_LOGGING branch a develop
+- [#36](https://github.com/OliverHz28/PC3Proyecto10/pull/36) : test[[#29]](#29-agregar-pruebas-unitarias-para-check_prpy) :
+agregar tests para check_pr.py
+- [#37](https://github.com/OliverHz28/PC3Proyecto10/pull/36) : feat[[#19]](#19-extender-workflow-de-actions-para-prs) :
+merge Feature/extender-workflow a develop
+
+#### 3.1 Rechazados
+- [#26](https://github.com/OliverHz28/PC3Proyecto10/pull/21) : feat[[#21]](#21-configurar-simulación-con-act-pull_request): añadir lint_all.sh y los test al workflow
+- [#27](https://github.com/OliverHz28/PC3Proyecto10/pull/27) : Feature/config pullrequest
+test[[#29]](#29-agregar-pruebas-unitarias-para-check_prpy): agregar pruebas unitarias para check_pr.py
+- [#35](https://github.com/OliverHz28/PC3Proyecto10/pull/27) : Feature/config pullrequest
+test[[#29]](#29-agregar-pruebas-unitarias-para-check_prpy): merge feature/test_check-pr a develop
+
+## Objetivos
+
+* Completar **`check_pr.py`**:
+
+  - Leer carpeta `pr_simulation/<id>/` y:
+
+     * `pr_<id>_title.txt` -> validar patrón `^[A-Z]{3,5}-\d+: .+`.
+     * `CHANGELOG.md` -> verificar que contenga `<id>` en una sección "## PR <id>".
+     * `commits.txt` -> validar que cada línea comience con `feat[#n]: descripción` o `fix[#n]: descripción`.
+  - Generar `pr_simulation/<id>/pr_report.md` con:
+
+     * Sección **Título**: OK/Fail (explicar si no coincide).
+     * Sección **Changelog**: OK/Fail (explicar si no se actualizó).
+     * Sección **Commits**: OK/Fail (enlistar commits inválidos).
+     * Sección **Lint**: llamar a `lint_all.sh` y capturar salida; indicar si OK/Fail.
+     * Sección **Tests**: ejecutar `pytest --maxfail=1 --disable-warnings -q` y reportar éxito o fallos.
+  - Si cualquier sección es "Fail", salir con código de error -
+* Ampliar **`pr_validation.yaml`**:
+
+  * Job `validate-pr`:
+
+    - Usa `actions/checkout@v2`.
+    - Ejecuta `scripts/lint_all.sh`.
+    - Corre pytest con cobertura y falla si < 80%.
+    - Ejecuta `python3 scripts/check_pr.py pr_simulation/<id>` (usando matrix strategy para probar varios IDs de ejemplo).
+  * Configurar `on: pull_request` y `on: workflow_dispatch`.
+* Crear **dos ramas de feature**:
+
+  - `feature/AUTO_INCR_VERSION`: modifica `config_modifier.py` para incrementar también otro parámetro (p. ej., `build_number`).
+  - `feature/ADD_LOGGING`: añade un módulo Python `logger.py` que gestione logs en archivos.
+* Simular **2 Pull Requests locales**:
+
+  * Para cada rama, crear `pr_simulation/201_title.txt`, `pr_simulation/201_body.md`,
+    `pr_simulation/201_commits.txt` con 3 commits apropiados.
+  * Ejecutar `act pull_request` localmente para disparar `pr_validation.yaml`.
+  * Revisar resultados y corregir errores en scripts y código.
+
+## Demostracion en video
+
+[Sprint 2 (Dia 18/06/2025) Grupo 6 Proyecto 10 ](https://www.youtube.com/watch?v=CXj9d7sZ-J0)
+
+## Distribución
+
+- **Edy Serrano**: Issues [#19](#19-extender-workflow-de-actions-para-prs), [#20](#20-mejorar-lint_allsh-con-manejo-de-errores), [#21](#21-configurar-simulación-con-act-pull_request)
+- **Frank Hinojosa**: Issues [#13](#13-añadir-incremento-automatico-de-build_number-en-config_modifierpy), [#14](#14-añadir-modulo-de-logging)
+- **Germain Choquecambi**: [#15](#15-validar-el-titulo-de-pr), [#16](#16-verificar-que-el-changelog-este-actualizado), [#17](#17-validar-formato-de-los-mensajes-de-commit), [#18](#18-generar-informe-de-validacion), [#24](#24-configurar-simulación-con-act-pull_request), [#29](#29-agregar-pruebas-unitarias-para-check_prpy)
+
+## Issues del Sprint 2
+
+### [#13](https://github.com/OliverHz28/PC3Proyecto10/issues/13) Añadir incremento automatico de build_number en config_modifier.py
+- **User story**  
+    **As a** _desarrollador_  
+    **I need** _extender `config_modifier.py` para incrementar el campo build_number_  
+    **So that** _las builds automatizadas tengan un seguimiento adecuado de versiones_
+- **Responsable**: Frank Hinojosa
+- **Rama**: `feature/AUTO_INCR_VERSION`
+- **Objetivo**: Asegurar que las builds automatizadas cuenten con un seguimiento de versiones adecuado mediante la gestion del campo build_number
+
+### [#14](https://github.com/OliverHz28/PC3Proyecto10/issues/14) Añadir modulo de logging
+- **User story**  
+    **As a** _desarrollador_  
+    **I need** _crear un modulo `logger.py` para la gestion de logs_  
+    **So that** _todos los scripts tengan la capacidad de diagnostico y rastros de auditoría_
+- **Responsable**: Frank Hinojosa
+- **Rama**: `feature/ADD_LOGGING`
+- **Objetivo**: Equipar los scripts con la capacidaded de diagnostico y rastreo de auditoria
+
+### [#15](https://github.com/OliverHz28/PC3Proyecto10/issues/15) Validar el titulo de PR
+- **User story**  
+    **As a** _desarrollador_  
+    **I need** _que el script `check_pr.py` compruebe el archivo pr_<id>_title.txt cumpla con el patron  `^[A-Z]{3,5}-\d+: .+`_  
+    **So that** _los títulos de los Pull Requests sean claros y faciles de entender para todo el equipod_
+- **Responsable**: Germain Choquechambi
+- **Rama**: `feature/validar-pr`
+- **Objetivo**: Extender el script check_pr.py para que sea capaz de leer el contenido de archivos de titulo de PR y validar su formato
+
+### [#16](https://github.com/OliverHz28/PC3Proyecto10/issues/16) Verificar que el changelog este actualizado
+- **User story**  
+    **As a** _desarrollador_  
+    **I need** _que el script `check_pr.py` revise si el archivo `CHANGELOG.md` incluye una seccion para el PR actual (por ejemplo, ## PR 201_ )
+    **So that** _podamos mantener un registro claro de los cambios realizados por cada PR_
+- **Responsable**: Germain Choquechambi
+- **Rama**: `feature/validar-pr`
+- **Objetivo**: Añadir una funcionalidad al script check_pr.py que permita inspeccionar el contenido del archivo CHANGELOG.md
+
+### [#17](https://github.com/OliverHz28/PC3Proyecto10/issues/17) Validar formato de los mensajes de commit
+- **User story**  
+    **As a** _desarrollador_  
+    **I need** _que el script `check_pr.py` revise que los mensajes de commit tengan un formato claro y uniforme_  
+    **So that** _el historial de cambios sea mas facil de leer y mantener para todo el equipo_
+- **Responsable**: Germain Choquechambi
+- **Rama**: `feature/validar-pr`
+- **Objetivo**: Añadir una funcionalidad al script check_pr.py que permita leer y evaluar el formato de los mensajes de commit.
+
+### [#18](https://github.com/OliverHz28/PC3Proyecto10/issues/18) Generar informe de validacion
+- **User story**  
+    **As a** _desarrollador_  
+    **I need** _que `check_pr.py` cree un archivo pr_report.md con las secciones Título, Changelog, Commits, Lint y Tests, marcando cada una con OK o Fail_  
+    **So that** _pueda tener un resumen automático y rapido del estado de cada PR._
+- **Responsable**: Germain Choquechambi
+- **Rama**: `feature/validar-pr`
+- **Objetivo**: Proporcionar a un resumen automatico y rapido del estado de los pull request, centralizando los resultados de varias verificaciones en un unico archivo `pr_report.md`
+
+### [#19](https://github.com/OliverHz28/PC3Proyecto10/issues/19) Extender workflow de Actions para PRs
+- **User story**  
+    **As a** _miembro del equipo de DevOps_  
+    **I need** _actualizar pr_validation.yaml con un pipeline de validacion_  
+    **So that** _multiples PRs puedan validarse automAticamente en paralelo usando estrategia matrix de GitHub Actions_
+- **Responsable**: Edy Serrano
+- **Rama**: `feature/extender-workflow`
+- **Objetivo**: Automatizar y paralelizar el proceso de validación de los pull requests, utilizando github actions y su estrategia matrix
+
+### [#20](https://github.com/OliverHz28/PC3Proyecto10/issues/20) Mejorar lint_all.sh con manejo de errores
+- **User story**  
+    **As a** _ingeniero de integracion de CI_  
+    **I need** _un script lint_all.sh mejorado con manejo adecuado de errores_  
+    **So that** _los problemas de linting se identifiquen y reporten claramente tanto en entornos locales como de CI_
+- **Responsable**: Edy Serrano
+- **Rama**: `feature/mejora-lint`
+- **Objetivo**: Refactorizar el script `lint_all.sh` para gestionar de forma proactiva y clara los errores que puedan surgir durante el proceso de linting
+
+### [#21](https://github.com/OliverHz28/PC3Proyecto10/issues/21) Configurar simulación con act pull_request
+- **User story**  
+    **As a** _ingeniero de desarrollo local_  
+    **I need** _configurar y probar workflows de GitHub Actions localmente usando act_  
+    **So that** _la validacion de PR pueda probarse sin hacer push al repositorio remoto_
+- **Responsable**: Edy Serrano
+- **Rama**: `feature/workflow-pull_request`
+- **Objetivo**: Permitir probar y depurar los workflows de github actions de forma local antes de hacer un push al repositorio remoto
+
+### [#24](https://github.com/OliverHz28/PC3Proyecto10/issues/24) Configurar simulación con act pull_request
+- **Historias de usuario relacionados**
+  
+  [#15](#15-validar-el-titulo-de-pr) Validar formato del título de PR
+  
+  [#16](#16-verificar-que-el-changelog-este-actualizado) Verificar que el changelog esté actualizado
+  
+  [#17](#17-validar-formato-de-los-mensajes-de-commit) Validar formato de los mensajes de commit
+  
+  [#18](#18-generar-informe-de-validacion) Generar informe de 
+  validacion  
+- **Responsable**: Germain Choquechambi
+- **Rama**: `feature/validar-pr`
+- **Objetivo**: Automatizar la validación de Pull Requests mediante el `check_pr.py` para  que analice los archivos de la PR (título, changelog, commits), ejecute linters y tests, y genere un reporte `pr_report.md` con los resultados de la validacion
+
+### [#29](https://github.com/OliverHz28/PC3Proyecto10/issues/29) Agregar pruebas unitarias para check_pr.py
+- **User story**  
+    **As a** _desarrollador_  
+    **I need** _agregar pruebas unitarias para validar el formato del título, los commits y la sección en el CHANGELOG.md en pull requests_  
+    **So that** _pueda asegurarme de que las PRs cumplan con las reglas definidas antes de ser revisadas o integradas_
+- **Responsable**: Germain Choquechambi
+- **Rama**: `feature/tests-check-pr`
+- **Objetivo**: Implementar pruebas unitarias para garantizar la calidad de las funciones de validacion existentes.
+
+## Flujo de Trabajo
+Se utilizo la estrategia **Git Flow** para organizar el desarrollo:
+
+- **Ramas principales**:
+  - `main`: Contiene la version estable y lista para produccion.
+  - `develop`: Integra las funcionalidades completadas antes de pasar a `main`.
+
+- **Ramas de soporte**:
+  - `feature/*`: Cada nueva funcionalidad o issue se desarrolla en una rama `feature/nombre-issue` creada desde `develop`.
+  - `hotfix/*`: Para corregir errores críticos detectados en `main`.
+  - `release/*`: Preparacion de nuevas versiones antes de fusionar a `main`.
+
+## Ejecucion del Proyecto
+
+Continuando con los pasos del  sprint 1, a continuacion seguir los siguientes pasos:
+
+1.**Instalar las nuevas dependencias**
+  
+  ```bash
+  pip install -r requirements.txt
+  ```
+2.**Ejecucion de `check_pr.py`**
+    
+  Esto generara un reporte `pr_report.md` de los pull request
+  
+  ```bash
+  python3 scripts/check_pr.py
+  ```
+
+  Ejecucion de sus tests
+  
+  ```bash
+  pytest tests/test_check_pr.py
+  ```
+
+2.**Ejecucion de `config_modifier.py`**
+      
+  Esto generara tambien la carpeta logs
+  
+  ```bash
+  python3 src/config_modifier.py
+  ```
+  Ejecucion de sus tests
+  
+  ```bash
+  pytest tests/test_config_modifier.py
+  ```
+
+3.**Instalacion de act**
+
+  Previa instalacion del docker, instalamos el act
+    
+  ```bash
+  curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
+  ```
+
+  Movemos el act a una carpeta global
+
+  ```bash
+  sudo mv ./bin/act /usr/local/bin/act
+  ```
+4.Ejecucion del act 
+  ```bash
+  act pull_request
+  ```

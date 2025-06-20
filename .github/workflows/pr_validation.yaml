@@ -49,6 +49,5 @@ jobs:
           mkdir -p pr_simulation/${{ matrix.pr_id }}
 
       - name: Ejecutar validacion (check_pr.py)
-        working-directory: scripts
         run: |
-          python3 check_pr.py
+          python3 scripts/check_pr.py

@@ -28,7 +28,7 @@ def validar_titulo(carpeta_pr: str) -> Tuple[bool, str]:
 # Verifica que el archivo CHANGELOG.md contenga una seccion para el PR actual
 def verificar_changelog(carpeta_pr: str) -> Tuple[bool, str]:
 
-    archivo_changelog = "../CHANGELOG.md"
+    archivo_changelog = "CHANGELOG.md"
 
     if not os.path.isfile(archivo_changelog):
         return False, "FAIL: no existe CHANGELOG.md"
@@ -62,7 +62,7 @@ def validar_commits(carpeta_pr: str) -> Tuple[bool, List[str]]:
 def ejecutar_lint() -> Tuple[bool, str]:
     try:
         resultado = subprocess.run(
-            ["bash", "lint_all.sh"],
+            ["bash", "scripts/lint_all.sh"],
             capture_output=True,
             text=True)
         if resultado.returncode == 0:
@@ -79,7 +79,8 @@ def ejecutar_tests() -> Tuple[bool, str]:
         resultado = subprocess.run(
             ["pytest", "--maxfail=1", "--disable-warnings", "-q"],
             capture_output=True,
-            text=True
+            text=True,
+
         )
         if resultado.returncode == 0:
             return True, resultado.stdout.strip()
@@ -117,8 +118,8 @@ def generar_pr_repor(ruta_report: str, titulo, changelog, commits, lint, tests):
         f.write(f"```\n{tests[1]}\n```\n")
 
 
-def main():
-    ruta_base = "../pr_simulation"
+def main(): # pragma: no cover
+    ruta_base = "pr_simulation"
     if not os.path.isdir(ruta_base):
         print("No existe la carpeta pr_simulation")
         sys.exit(1)
@@ -148,5 +149,5 @@ def main():
         print("pr_report.md generado en:", os.path.join(ruta_pr, "pr_report.md"))
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     main()
