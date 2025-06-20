@@ -48,7 +48,7 @@ def validar_pr_body(carpeta_pr: str) -> Tuple[bool, str]:
 
 # Verifica que el archivo CHANGELOG.md contenga una seccion para el PR actual
 def verificar_changelog(carpeta_pr: str) -> Tuple[bool, str]:
-    archivo_changelog = "../CHANGELOG.md"
+    archivo_changelog = "CHANGELOG.md"
 
     if not os.path.isfile(archivo_changelog):
         return False, "FAIL: no existe CHANGELOG.md"
@@ -96,6 +96,37 @@ def validar_commits(carpeta_pr: str) -> Tuple[bool, List[str]]:
     return (len(incorrectos) == 0, incorrectos)
 
 
+# Detecta lineas duplicadas en los archivos Python del proyecto
+def detectar_lineas_duplicadas_py() -> List[str]:
+    ruta_src = os.path.abspath("src")
+
+    if not os.path.isdir(ruta_src):
+        return []
+
+    from collections import defaultdict
+    lineas: defaultdict[str, List[str]] = defaultdict(list)
+
+    for raiz, _, archivos in os.walk(ruta_src):
+        for archivo in archivos:
+            if archivo.endswith(".py"):
+                ruta_archivo = os.path.join(raiz, archivo)
+                with open(ruta_archivo, encoding="utf-8") as f:
+                    for numero, linea in enumerate(f, 1):
+                        linea = linea.strip()
+                        if linea and not linea.startswith("#"):
+                            clave = linea
+                            ubicacion = f"{archivo}:{numero}"
+                            if ubicacion not in lineas[clave]:
+                                lineas[clave].append(ubicacion)
+
+    duplicadas = [
+        f"'{linea}' aparece en {', '.join(ubicaciones)}"
+        for linea, ubicaciones in lineas.items() if len(ubicaciones) > 1
+    ]
+
+    return duplicadas
+
+
 # Ejecuta el script lint_all.sh para validar la calidad del codigo
 def ejecutar_lint() -> Tuple[bool, str]:
     try:
@@ -130,7 +161,7 @@ def ejecutar_tests() -> Tuple[bool, str]:
 
 # Genera el reporte de validacion del PR en formato Markdown
 def generar_pr_repor(ruta_report: str, titulo, changelog, commits,
-                     lint, tests, pr_body):
+                     lint, tests, pr_body, sugerencias):
     with open(ruta_report, "w", encoding="utf-8") as f:
         f.write("# Informe de Validacion\n\n")
         f.write("## Titulo\n")
@@ -162,6 +193,11 @@ def generar_pr_repor(ruta_report: str, titulo, changelog, commits,
         f.write(f"{'OK' if tests[0] else 'FAIL'}\n")
         f.write(f"```\n{tests[1]}\n```\n")
 
+        if sugerencias:
+            f.write("## Mejoras sugeridas\n")
+            for sugerencia in sugerencias:
+                f.write(f"- {sugerencia}\n")
+
 
 def main():  # pragma: no cover
 
@@ -183,6 +219,7 @@ def main():  # pragma: no cover
         lint = ejecutar_lint()
         tests = ejecutar_tests()
         pr_body = validar_pr_body(ruta_pr)
+        sugerencias = detectar_lineas_duplicadas_py()
 
         generar_pr_repor(
             os.path.join(ruta_pr, "pr_report.md"),
@@ -191,7 +228,8 @@ def main():  # pragma: no cover
             commits,
             lint,
             tests,
-            pr_body
+            pr_body,
+            sugerencias
         )
     # indica donde se guardo el pr_report.md
         print("pr_report.md generado en:", os.path.join(ruta_pr, "pr_report.md"))
