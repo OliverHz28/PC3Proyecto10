@@ -90,3 +90,4 @@ jobs:
         run: |
           echo "Vulnerabilidades críticas detectadas por Bandit o ShellCheck"
           exit 1
+
