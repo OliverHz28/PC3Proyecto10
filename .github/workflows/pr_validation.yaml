@@ -12,6 +12,7 @@ on:
 
 jobs:
   validate-pr:
+    needs: security-scan
     runs-on: ubuntu-latest
 
     strategy:
@@ -40,7 +41,6 @@ jobs:
           chmod +x ./scripts/lint_all.sh
           ./scripts/lint_all.sh
 
-
       - name: Ejecutar pruebas
         run: pytest --cov=src --cov=scripts --cov-fail-under=80
 
@@ -51,3 +51,42 @@ jobs:
       - name: Ejecutar validacion (check_pr.py)
         run: |
           python3 scripts/check_pr.py
+
+          
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v2
+
+      - name: Configurar Python y herramientas
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Instalar Bandit y ShellCheck
+        run: |
+          pip install bandit
+          sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Ejecutar Bandit
+        id: bandit
+        continue-on-error: true
+        run: |
+          bandit -r src/ \
+            --format json \
+            --severity-level high\
+            -o bandit_report.json
+
+      - name: Ejecutar ShellCheck
+        id: shellcheck
+        continue-on-error: true
+        run: shellcheck scripts/*.sh
+
+      - name: Verificar resultados y fallar si hay vulnerabilidades
+        if: ${{ steps.bandit.outcome != 'success' || steps.shellcheck.outcome != 'success' }}
+        run: |
+          echo "Vulnerabilidades críticas detectadas por Bandit o ShellCheck"
+          exit 1
