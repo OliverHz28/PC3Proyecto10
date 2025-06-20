@@ -543,3 +543,7 @@ Continuando con los pasos del  sprint 2, a continuacion seguir los siguiente pas
   ```bash
   act pull_request
   ```
+
+## Demostracion en video
+
+[Sprint 3 (19/06/2025) Grupo 6 Proyecto 10 ](https://www.youtube.com/watch?v=EdfvsKFbDEw)
