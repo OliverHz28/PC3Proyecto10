@@ -3,7 +3,7 @@ import tempfile
 from scripts.check_pr import (validar_titulo, verificar_changelog,
                               validar_commits, ejecutar_lint,
                               ejecutar_tests, generar_pr_repor,
-                              validar_pr_body)
+                              validar_pr_body, detectar_lineas_duplicadas_py)
 from unittest.mock import patch, MagicMock
 
 
@@ -263,6 +263,7 @@ def test_generar_reporte_contenido(tmp_path):
 
     assert ruta.exists()
 
+
 # test que verifica que el body de menos de 200  caracteres falla la validacion
 def test_body_contenido_corto():
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -292,3 +293,26 @@ def test_body_sin_seccion_resumen():
 
         ok, _ = validar_pr_body(carpeta_pr)
         assert not ok
+
+
+def test_detectar_lineas_duplicadas(tmp_path, monkeypatch):
+    src_path = tmp_path / "src"
+    src_path.mkdir()
+
+    (src_path / "a.py").write_text("""
+                    def saludar():
+                        print("Hola mundo")
+                        return True
+                    """)
+
+    (src_path / "b.py").write_text("""
+                    def despedir():
+                        print("Hola mundo")
+                        return False
+                    """)
+
+    monkeypatch.setattr("scripts.check_pr.os.path.abspath", lambda path: str(src_path))
+
+    duplicadas = detectar_lineas_duplicadas_py()
+
+    assert duplicadas
