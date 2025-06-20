@@ -57,3 +57,21 @@ def test_ejecutar_tests_y_guardar_log_error(mock_run, mock_logger, temp_pr_dir):
     assert os.path.isfile(tests_log)
     with open(tests_log) as f:
         assert "Error al ejecutar pytest" in f.read()
+
+
+@mock.patch("scripts.log_pr.obtener_logger")
+@mock.patch("scripts.log_pr.subprocess.run")
+def test_ejecutar_lint_y_guardar_log_bandit(mock_run, mock_logger, temp_pr_dir):
+    # Simula que bandit_report.json existe
+    raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    bandit_path = os.path.join(raiz, "bandit_report.json")
+    with open(bandit_path, "w") as f:
+        f.write("{}")
+    mock_run.return_value = mock.Mock(stdout="lint ok", returncode=0)
+    result = log_pr.ejecutar_lint_y_guardar_log(temp_pr_dir)
+    assert result
+    logs_dir = os.path.join(temp_pr_dir, "logs")
+    assert os.path.isfile(os.path.join(logs_dir, "bandit_report.json"))
+    # Limpieza
+    if os.path.exists(bandit_path):
+        os.remove(bandit_path)
