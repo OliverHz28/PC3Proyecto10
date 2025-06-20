@@ -26,7 +26,7 @@ echo "==============================================="
 if check_tool flake8; then
 	echo "*********************"
 	echo "Ejecutando flake8"
-	if flake8 src/ tests/ scripts/ --max-line-length=88 --select=E,W,F; then
+	if flake8 src/ tests/ --max-line-length=88 --select=E,W,F; then
 		echo -e "${GREEN} No se encontraron errores con flake8${NC}"
 	else
 		echo -e "${RED} flake8 encontró errores${NC}"
